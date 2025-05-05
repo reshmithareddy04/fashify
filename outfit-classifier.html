@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Discover your perfect outfit with Smart Outfit Classifier! Input your occasion, weather, and style preferences for AI-powered fashion recommendations." />
+  <meta name="keywords" content="smart outfit classifier, fashion AI, outfit planner, style recommender, occasion-based fashion" />
+  <meta property="og:title" content="Smart Outfit Classifier - StyleGen AI" />
+  <meta property="og:description" content="Get personalized outfit recommendations based on occasion, weather, and style with a touch of flair!" />
+  <meta property="og:image" content="/assets/og-style.jpg" />
+  <title>Smart Outfit Classifier - StyleGen AI</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
+  <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
+      background: linear-gradient(135deg, #0d1b2a, #1b263b);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(90deg, #3c096c, #14213d);
+      color: #fff;
+      padding: 3rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      animation: headerGlow 2s ease-in-out;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://source.unsplash.com/random/1600x400?fashion') no-repeat center/cover;
+      opacity: 0.2;
+      z-index: 0;
+      filter: blur(2px);
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(60, 9, 108, 0.4), rgba(20, 33, 61, 0.4));
+      z-index: 1;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #f4a261;
+      text-shadow: 0 0 20px rgba(244, 162, 97, 0.7), 0 0 30px rgba(244, 162, 97, 0.5);
+      position: relative;
+      z-index: 2;
+      animation: logoPulse 3s infinite ease-in-out;
+    }
+
+    .logo:hover {
+      transform: translateY(-5px) scale(1.05);
+      color: #fff;
+    }
+
+    .ai-label {
+      background: linear-gradient(45deg, #5a189a, #7b2cbf);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(91, 24, 154, 0.6);
+      position: relative;
+      z-index: 2;
+    }
+
+    .nav {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .nav a {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #d4d4d4;
+      position: relative;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #f4a261;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(244, 162, 97, 0.5);
+    }
+
+    .nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav a:hover {
+      color: #fff;
+      transform: translateY(-3px);
+      text-shadow: 0 0 15px rgba(244, 162, 97, 0.8);
+    }
+
+    /* Puzzle Fashion Icons */
+    .fashion-icons {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem 0;
+      z-index: 2;
+    }
+
+    .fashion-icons.left {
+      left: 0;
+    }
+
+    .fashion-icons.right {
+      right: 0;
+    }
+
+    .fashion-icons i {
+      font-size: 1.5rem;
+      color: #f4a261;
+      opacity: 0.7;
+      transition: transform 0.3s, opacity 0.3s, color 0.3s;
+    }
+
+    .fashion-icons i:hover {
+      transform: scale(1.3);
+      opacity: 1;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(244, 162, 97, 0.8);
+    }
+
+    .fashion-icons i:nth-child(odd) {
+      transform: translateX(10px);
+    }
+
+    .fashion-icons i:nth-child(even) {
+      transform: translateX(-10px);
+    }
+
+    /* Main Section */
+    .outfit-planner {
+      padding: 5rem 1rem;
+      background: #1b263b;
+      text-align: center;
+      color: #e0e0e0;
+      animation: fadeInUp 1.8s ease-out;
+    }
+
+    .outfit-planner h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      color: #f4a261;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 15px rgba(244, 162, 97, 0.5);
+    }
+
+    .outfit-planner p {
+      font-size: 1.3rem;
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
+      color: #d4d4d4;
+    }
+
+    /* Form Styling */
+    #plannerForm {
+      max-width: 600px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #f4a261;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group select {
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    .form-group select:focus {
+      outline: none;
+      border-color: #7b2cbf;
+      box-shadow: 0 0 10px rgba(91, 24, 154, 0.4);
+    }
+
+    .btn-primary {
+      padding: 1rem 3rem;
+      border: none;
+      background: linear-gradient(45deg, #7b2cbf, #f4a261);
+      color: #fff;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(91, 24, 154, 0.4);
+      justify-self: center;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, #5a189a, #e76f51);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(91, 24, 154, 0.6);
+    }
+
+    /* Outfit Preview */
+    .outfit-preview {
+      margin: 2rem 0;
+      display: none;
+    }
+
+    #outfitImage {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Result Panel */
+    .result-panel {
+      margin-top: 2.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .result-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+    }
+
+    .result-panel p {
+      font-size: 1.2rem;
+      color: #d4d4d4;
+      margin-bottom: 1rem;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #7b2cbf;
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+
+    .color-swatch {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Footer */
+    .footer {
+      background: #0d1b2a;
+      color: #d4d4d4;
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 2px solid #f4a261;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes headerGlow {
+      0% {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+      50% {
+        box-shadow: 0 12px 60px rgba(244, 162, 97, 0.3);
+      }
+      100% {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @keyframes logoPulse {
+      0% {
+        text-shadow: 0 0 20px rgba(244, 162, 97, 0.7), 0 0 30px rgba(244, 162, 97, 0.5);
+      }
+      50% {
+        text-shadow: 0 0 30px rgba(244, 162, 97, 0.9), 0 0 40px rgba(244, 162, 97, 0.7);
+      }
+      100% {
+        text-shadow: 0 0 20px rgba(244, 162, 97, 0.7), 0 0 30px rgba(244, 162, 97, 0.5);
+      }
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .outfit-planner h1 {
+        font-size: 2.5rem;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .btn-primary {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+      }
+
+      .form-group select {
+        font-size: 0.9rem;
+      }
+
+      .fashion-icons {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .outfit-planner h1 {
+        font-size: 2rem;
+      }
+
+      .outfit-planner p {
+        font-size: 1.1rem;
+      }
+
+      .form-group label {
+        font-size: 1rem;
+      }
+
+      .result-panel h3 {
+        font-size: 1.5rem;
+      }
+
+      .result-panel p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="container">
+      <div class="fashion-icons left">
+        <i class="fas fa-hat-cowboy"></i>
+        <i class="fas fa-tshirt"></i>
+        <i class="fas fa-shoe-prints"></i>
+        <i class="fas fa-glasses"></i>
+      </div>
+      <div class="fashion-icons right">
+        <i class="fas fa-hat-wizard"></i>
+        <i class="fas fa-socks"></i>
+        <i class="fas fa-boot"></i>
+        <i class="fas fa-watch"></i>
+      </div>
+      <a href="/" class="logo" aria-label="StyleGen AI Home">
+        <h1>StyleGen <span class="ai-label">AI</span></h1>
+      </a>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="index.html">Features</a>
+        <a href="outfit-classifier.html">Plan Outfit</a>
+        <a href="index.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="outfit-planner" role="region" aria-labelledby="planner-title">
+      <div class="container">
+        <h1 id="planner-title">Smart Outfit Classifier</h1>
+        <p>Plan your perfect outfit with AI-powered style recommendations tailored to your occasion, weather, and vibe!</p>
+        <form id="plannerForm" aria-describedby="planner-instructions">
+          <p id="planner-instructions" class="sr-only">Select your occasion, weather, style preference, and formality to plan your outfit.</p>
+          <div class="form-group">
+            <label for="occasion">What's the Occasion?</label>
+            <select id="occasion" required aria-required="true">
+              <option value="" disabled selected>Pick the Event</option>
+              <option value="casual">Casual Day Out</option>
+              <option value="work">Work/Office</option>
+              <option value="party">Party/Night Out</option>
+              <option value="formal">Formal Event</option>
+              <option value="date">Date Night</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="weather">What's the Weather Like?</label>
+            <select id="weather" required aria-required="true">
+              <option value="" disabled selected>Check the Forecast</option>
+              <option value="sunny">Sunny/Warm</option>
+              <option value="cold">Cold/Chilly</option>
+              <option value="rainy">Rainy/Wet</option>
+              <option value="windy">Windy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="style">Your Style Vibe?</label>
+            <select id="style" required aria-required="true">
+              <option value="" disabled selected>Choose Your Aesthetic</option>
+              <option value="boho">Boho/Chic</option>
+              <option value="street">Streetwear</option>
+              <option value="classic">Classic/Timeless</option>
+              <option value="minimal">Minimalist</option>
+              <option value="glam">Glamorous</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="formality">Formality Level?</label>
+            <select id="formality" required aria-required="true">
+              <option value="" disabled selected>Select Formality</option>
+              <option value="casual">Casual</option>
+              <option value="smart-casual">Smart Casual</option>
+              <option value="business">Business Professional</option>
+              <option value="formal">Formal/Black Tie</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" aria-label="Plan my outfit">Plan My Outfit!</button>
+        </form>
+        <div class="outfit-preview" id="outfitPreview">
+          <p id="outfitDescription"></p>
+        </div>
+        <div id="plannerResult" class="result-panel" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>© 2025 StyleGen AI. Designed with ❤️ by the xAI Team.</p>
+  </footer>
+
+  <script>
+    // Outfit Classifier Logic
+    const funnyQuotes = [
+      "Your outfit is so on-point, it deserves its own runway!",
+      "Slay the day with a look that screams YOU!",
+      "This vibe? Iconic. The streets aren't ready!",
+      "Your style is giving main character energy!",
+      "Dress like you're already famous!"
+    ];
+
+    function getRandomQuote() {
+      return funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)];
+    }
+
+    function getOutfitSuggestion(occasion, weather, style, formality) {
+      const outfitData = {
+        casual: {
+          sunny: {
+            boho: `A flowy ${style} maxi dress or linen shirt with neutral sandals. Add a wide-brimmed hat for sun protection.`,
+            street: `A graphic tee with ${style} cargo shorts and chunky sneakers. Top with a bucket hat.`,
+            classic: `A ${style} polo shirt with chino shorts and loafers. Keep it crisp and cool.`,
+            minimal: `A white ${style} tee with tailored shorts and sleek sneakers. Less is more.`,
+            glam: `A ${style} vibrant jumpsuit with statement sunglasses and strappy sandals.`
+          },
+          cold: {
+            boho: `A ${style} knit sweater with a long skirt or corduroy pants, layered with a scarf and ankle boots.`,
+            street: `A ${style} oversized hoodie with joggers and high-top sneakers. Add a puffer jacket.`,
+            classic: `A ${style} wool sweater with tailored trousers and Chelsea boots. Layer with a trench coat.`,
+            minimal: `A ${style} monochrome turtleneck with slim-fit jeans and minimalist boots.`,
+            glam: `A ${style} faux-fur coat over a sweater dress with knee-high boots.`
+          },
+          rainy: {
+            boho: `A ${style} printed raincoat over a midi dress with waterproof ankle boots.`,
+            street: `A ${style} waterproof parka with cargo pants and rubber sneakers.`,
+            classic: `A ${style} tailored trench coat with chinos and loafers. Don’t forget an umbrella!`,
+            minimal: `A ${style} sleek raincoat with black jeans and waterproof minimalist boots.`,
+            glam: `A ${style} shiny vinyl trench with a bold dress and heeled rain boots.`
+          },
+          windy: {
+            boho: `A ${style} layered cardigan over a maxi skirt with sturdy boots to stay grounded.`,
+            street: `A ${style} windbreaker with joggers and fitted cap to keep it snug.`,
+            classic: `A ${style} tailored blazer with trousers and loafers, secured with a belt.`,
+            minimal: `A ${style} fitted jacket with slim jeans and sleek boots.`,
+            glam: `A ${style} dramatic cape coat over a fitted dress with ankle boots.`
+          }
+        },
+        work: {
+          sunny: {
+            boho: `A ${style} linen blazer with a flowy blouse and tailored trousers. Add loafers.`,
+            street: `A ${style} structured bomber jacket with chinos and clean sneakers.`,
+            classic: `A ${style} lightweight blazer with a dress shirt, chinos, and brogues.`,
+            minimal: `A ${style} crisp white shirt with tailored trousers and minimalist loafers.`,
+            glam: `A ${style} tailored jumpsuit with sleek heels and subtle jewelry.`
+          },
+          cold: {
+            boho: `A ${style} wool cardigan over a blouse with trousers and ankle boots.`,
+            street: `A ${style} oversized blazer with a hoodie, chinos, and sneakers.`,
+            classic: `A ${style} wool suit with a dress shirt and polished boots.`,
+            minimal: `A ${style} monochrome coat over a turtleneck and trousers.`,
+            glam: `A ${style} tailored coat over a sheath dress with heeled boots.`
+          },
+          rainy: {
+            boho: `A ${style} waterproof trench over a blouse and trousers with loafers.`,
+            street: `A ${style} sleek raincoat with chinos and waterproof sneakers.`,
+            classic: `A ${style} classic trench over a suit with polished shoes.`,
+            minimal: `A ${style} minimalist raincoat with a dress shirt and trousers.`,
+            glam: `A ${style} glossy trench over a tailored dress with heeled rain boots.`
+          },
+          windy: {
+            boho: `A ${style} fitted blazer over a blouse with trousers and sturdy loafers.`,
+            street: `A ${style} wind-resistant jacket with chinos and fitted sneakers.`,
+            classic: `A ${style} tailored coat over a suit with secure dress shoes.`,
+            minimal: `A ${style} sleek coat with a dress shirt and slim trousers.`,
+            glam: `A ${style} structured coat over a dress with ankle boots.`
+          }
+        },
+        party: {
+          sunny: {
+            boho: `A ${style} off-shoulder maxi dress with bold earrings and sandals.`,
+            street: `A ${style} metallic bomber jacket with ripped jeans and statement sneakers.`,
+            classic: `A ${style} tailored blazer with a silk shirt and slim-fit trousers.`,
+            minimal: `A ${style} sleek black dress or suit with minimalist heels.`,
+            glam: `A ${style} sequined dress with strappy heels and a clutch.`
+          },
+          cold: {
+            boho: `A ${style} velvet maxi dress with layered necklaces and heeled boots.`,
+            street: `A ${style} leather jacket with a graphic tee and bold sneakers.`,
+            classic: `A ${style} wool blazer with a dress shirt and tailored trousers.`,
+            minimal: `A ${style} monochrome jumpsuit with sleek boots.`,
+            glam: `A ${style} fur-trimmed coat over a sparkly dress with heels.`
+          },
+          rainy: {
+            boho: `A ${style} printed raincoat over a party dress with heeled rain boots.`,
+            street: `A ${style} waterproof jacket with bold jeans and sneakers.`,
+            classic: `A ${style} trench over a dress shirt and trousers with loafers.`,
+            minimal: `A ${style} sleek raincoat over a minimalist dress or suit.`,
+            glam: `A ${style} glossy trench over a sequined dress with heeled boots.`
+          },
+          windy: {
+            boho: `A ${style} fitted jacket over a flowy dress with secure boots.`,
+            street: `A ${style} windbreaker with bold pants and sneakers.`,
+            classic: `A ${style} tailored coat over a dress shirt and trousers.`,
+            minimal: `A ${style} fitted coat with a sleek dress or suit.`,
+            glam: `A ${style} structured coat over a sparkly dress with heels.`
+          }
+        },
+        formal: {
+          sunny: {
+            boho: `A ${style} flowy gown or tailored suit with elegant sandals.`,
+            street: `A ${style} bold tuxedo with sleek sneakers for a twist.`,
+            classic: `A ${style} classic black tuxedo or gown with polished shoes.`,
+            minimal: `A ${style} sleek black dress or suit with minimalist heels.`,
+            glam: `A ${style} shimmering gown or tailored suit with statement heels.`
+          },
+          cold: {
+            boho: `A ${style} velvet gown or suit with a wool coat and heeled boots.`,
+            street: `A ${style} tailored tuxedo with a bold overcoat and sneakers.`,
+            classic: `A ${style} wool tuxedo or gown with a tailored coat.`,
+            minimal: `A ${style} monochrome gown or suit with sleek boots.`,
+            glam: `A ${style} fur-trimmed gown or suit with heeled boots.`
+          },
+          rainy: {
+            boho: `A ${style} waterproof trench over a gown or suit with heeled boots.`,
+            street: `A ${style} sleek raincoat over a tuxedo with bold shoes.`,
+            classic: `A ${style} classic trench over a tuxedo or gown.`,
+            minimal: `A ${style} minimalist raincoat over a sleek gown or suit.`,
+            glam: `A ${style} glossy trench over a shimmering gown or suit.`
+          },
+          windy: {
+            boho: `A ${style} fitted coat over a gown or suit with secure heels.`,
+            street: `A ${style} wind-resistant coat over a tuxedo with bold shoes.`,
+            classic: `A ${style} tailored coat over a tuxedo or gown.`,
+            minimal: `A ${style} sleek coat over a minimalist gown or suit.`,
+            glam: `A ${style} structured coat over a shimmering gown or suit.`
+          }
+        },
+        date: {
+          sunny: {
+            boho: `A ${style} floral midi dress or linen suit with sandals.`,
+            street: `A ${style} fitted jacket with jeans and bold sneakers.`,
+            classic: `A ${style} tailored blazer with a dress shirt and chinos.`,
+            minimal: `A ${style} sleek dress or suit with minimalist shoes.`,
+            glam: `A ${style} silky dress or tailored suit with strappy heels.`
+          },
+          cold: {
+            boho: `A ${style} knit sweater with a skirt or trousers and boots.`,
+            street: `A ${style} leather jacket with jeans and bold boots.`,
+            classic: `A ${style} wool blazer with a dress shirt and trousers.`,
+            minimal: `A ${style} monochrome sweater with slim trousers.`,
+            glam: `A ${style} velvet dress or suit with heeled boots.`
+          },
+          rainy: {
+            boho: `A ${style} printed raincoat over a dress or suit with boots.`,
+            street: `A ${style} waterproof jacket with jeans and sneakers.`,
+            classic: `A ${style} trench over a dress shirt and trousers.`,
+            minimal: `A ${style} sleek raincoat over a minimalist dress or suit.`,
+            glam: `A ${style} glossy trench over a silky dress or suit.`
+          },
+          windy: {
+            boho: `A ${style} fitted jacket over a dress or suit with boots.`,
+            street: `A ${style} windbreaker with jeans and sneakers.`,
+            classic: `A ${style} tailored coat over a dress shirt and trousers.`,
+            minimal: `A ${style} sleek coat over a minimalist dress or suit.`,
+            glam: `A ${style} structured coat over a silky dress or suit.`
+          }
+        }
+      };
+
+      const suggestion = outfitData[occasion]?.[weather]?.[style] || `Rock a versatile ${style} look tailored for ${occasion} and ${weather}.`;
+      return `For a ${formality} ${occasion} in ${weather} weather, try: ${suggestion}`;
+    }
+
+    function getOutfitDescription(occasion, style) {
+      const outfitMap = {
+        casual: {
+          boho: {
+            name: "South Indian Anarkali Kurta Set or Bohemian Maxi Dress",
+            colors: "Mustard Yellow and Emerald Green (South Indian), or Earthy Beige with Terracotta (European Boho)"
+          },
+          street: {
+            name: "North Indian Embroidered Kurta with Jeans or Streetwear Hoodie Set",
+            colors: "Royal Blue and White (North Indian), or Black with Neon Green Accents (American Street)"
+          },
+          classic: {
+            name: "South Indian Cotton Saree or Classic Polo and Chinos",
+            colors: "Cream and Maroon (South Indian), or Navy Blue and White (European Classic)"
+          },
+          minimal: {
+            name: "North Indian Straight Kurta or Minimalist Tee and Shorts",
+            colors: "Off-White and Grey (North Indian), or Black and White (American Minimal)"
+          },
+          glam: {
+            name: "South Indian Banarasi Lehenga or Vibrant Jumpsuit",
+            colors: "Gold and Deep Purple (South Indian), or Scarlet Red and Gold (European Glam)"
+          }
+        },
+        work: {
+          boho: {
+            name: "South Indian Silk Kurta with Palazzo or Linen Blazer Set",
+            colors: "Peacock Blue and Gold (South Indian), or Olive Green and Beige (European Boho)"
+          },
+          street: {
+            name: "North Indian Sherwani Jacket with Churidar or Bomber Jacket Set",
+            colors: "Charcoal Grey and Maroon (North Indian), or Black and Yellow (American Street)"
+          },
+          classic: {
+            name: "South Indian Silk Saree or Tailored Blazer and Chinos",
+            colors: "Navy and Cream (South Indian), or Grey and White (European Classic)"
+          },
+          minimal: {
+            name: "North Indian Kurta with Trousers or Monochrome Shirt and Pants",
+            colors: "White and Black (North Indian), or Grey and Black (American Minimal)"
+          },
+          glam: {
+            name: "South Indian Embroidered Lehenga or Tailored Jumpsuit",
+            colors: "Silver and Royal Blue (South Indian), or Emerald Green and Gold (European Glam)"
+          }
+        },
+        party: {
+          boho: {
+            name: "South Indian Pattu Saree or Off-Shoulder Maxi Dress",
+            colors: "Magenta and Gold (South Indian), or Turquoise and Coral (European Boho)"
+          },
+          street: {
+            name: "North Indian Anarkali Suit or Metallic Jacket and Jeans",
+            colors: "Black and Gold (North Indian), or Silver and Red (American Street)"
+          },
+          classic: {
+            name: "South Indian Kanjivaram Saree or Silk Shirt and Trousers",
+            colors: "Deep Green and Gold (South Indian), or Black and White (European Classic)"
+          },
+          minimal: {
+            name: "North Indian Straight Suit or Sleek Black Dress",
+            colors: "White and Navy (North Indian), or Black and Grey (American Minimal)"
+          },
+          glam: {
+            name: "South Indian Heavy Lehenga or Sequined Gown",
+            colors: "Royal Purple and Gold (South Indian), or Crimson and Silver (European Glam)"
+          }
+        },
+        formal: {
+          boho: {
+            name: "South Indian Zari Saree or Flowy Gown",
+            colors: "Gold and Maroon (South Indian), or Sage Green and Ivory (European Boho)"
+          },
+          street: {
+            name: "North Indian Embroidered Sherwani or Bold Tuxedo",
+            colors: "Black and Silver (North Indian), or Navy and Red (American Street)"
+          },
+          classic: {
+            name: "South Indian Silk Saree or Black Tuxedo",
+            colors: "Cream and Navy (South Indian), or Black and White (European Classic)"
+          },
+          minimal: {
+            name: "North Indian Minimal Kurta Set or Sleek Suit",
+            colors: "White and Grey (North Indian), or Black and Charcoal (American Minimal)"
+          },
+          glam: {
+            name: "South Indian Banarasi Saree or Shimmering Gown",
+            colors: "Gold and Emerald (South Indian), or Sapphire Blue and Gold (European Glam)"
+          }
+        },
+        date: {
+          boho: {
+            name: "South Indian Chanderi Saree or Floral Midi Dress",
+            colors: "Pink and Gold (South Indian), or Lavender and Beige (European Boho)"
+          },
+          street: {
+            name: "North Indian Kurta with Jeans or Leather Jacket Set",
+            colors: "Maroon and Black (North Indian), or Black and Orange (American Street)"
+          },
+          classic: {
+            name: "South Indian Silk Kurta or Blazer and Chinos",
+            colors: "Navy and Cream (South Indian), or Grey and White (European Classic)"
+          },
+          minimal: {
+            name: "North Indian Straight Kurta or Sleek Dress",
+            colors: "White and Black (North Indian), or Black and White (American Minimal)"
+          },
+          glam: {
+            name: "South Indian Embroidered Lehenga or Silky Dress",
+            colors: "Gold and Royal Blue (South Indian), or Red and Gold (European Glam)"
+          }
+        }
+      };
+      return outfitMap[occasion]?.[style] || { name: "Versatile Outfit", colors: "Neutral Tones (Universal)" };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const plannerForm = document.getElementById('plannerForm');
+      const plannerResult = document.getElementById('plannerResult');
+      const outfitPreview = document.getElementById('outfitPreview');
+      const outfitDescription = document.getElementById('outfitDescription');
+
+      plannerForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const occasion = document.getElementById('occasion').value;
+        const weather = document.getElementById('weather').value;
+        const style = document.getElementById('style').value;
+        const formality = document.getElementById('formality').value;
+
+        if (!occasion || !weather || !style || !formality) {
+          alert('Please fill out all fields to plan your outfit!');
+          return;
+        }
+
+        try {
+          const suggestion = getOutfitSuggestion(occasion, weather, style, formality);
+          const quote = getRandomQuote();
+          const outfit = getOutfitDescription(occasion, style);
+
+          // Show outfit description
+          outfitDescription.innerHTML = `<strong>Outfit:</strong> ${outfit.name}<br><strong>Best Colors:</strong> ${outfit.colors}`;
+          outfitPreview.style.display = 'block';
+          gsap.to(outfitPreview, { opacity: 1, y: 0, duration: 0.5 });
+
+          // Display results
+          plannerResult.innerHTML = `
+            <h3>Your Perfect Outfit Awaits!</h3>
+            <p class="quote">${quote}</p>
+            <p class="suggestion"><strong>Style Suggestion:</strong> ${suggestion}</p>
+            <p class="suggestion"><strong>Pro Tip:</strong> Accessorize with confidence and a smile!</p>
+          `;
+          gsap.to(plannerResult, { opacity: 1, y: 0, duration: 1, ease: "bounce.out" });
+        } catch (error) {
+          plannerResult.innerHTML = '<p>Oops! The outfit planner tripped on the runway. Try again!</p>';
+          console.error(error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

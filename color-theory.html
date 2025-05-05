@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Play a fun color therapy and fashion game to get personalized style advice tailored to your body shape, gender, and color palette with FashionGen AI." />
+  <meta name="keywords" content="color theory, color therapy, fashion AI, fashion game, body shape, gender" />
+  <meta property="og:title" content="Color Therapy Fashion Game - FashionGen AI" />
+  <meta property="og:description" content="Spin the color wheel for tailored fashion and color therapy advice with a dash of humor!" />
+  <meta property="og:image" content="/assets/og-color.jpg" />
+  <title>Color Therapy Fashion Game - FashionGen AI</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" />
+  <link rel="stylesheet" href="styled.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
+  <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
+  <style>
+    .wheel-container { text-align: center; margin: 20px 0; display: none; }
+    #spinWheel { border-radius: 50%; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="container">
+      <a href="/" class="logo" aria-label="FashionGen AI Home">
+        <h1>FashionGen <span class="ai-label">AI</span></h1>
+      </a>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="index.html">Features</a>
+        <a href="index.html">Play Game</a>
+        <a href="index.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="color-theory" role="region" aria-labelledby="game-title">
+      <div class="container">
+        <h1 id="game-title">Color Therapy Fashion Game</h1>
+        <p>Spin the color wheel to discover your perfect style with a sprinkle of humor!</p>
+        <form id="gameForm" aria-describedby="game-instructions">
+          <p id="game-instructions" class="sr-only">Select your gender, body shape, color palette, and primary color to play the fashion game.</p>
+          <div class="form-group">
+            <label for="gender">Who Are You?</label>
+            <select id="gender" required aria-required="true">
+              <option value="" disabled selected>Pick Your Vibe</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="transgender">Transgender</option>
+              <option value="nonbinary">Non-binary/Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bodyType">Your Body Shape?</label>
+            <select id="bodyType" required aria-required="true">
+              <option value="" disabled selected>What's Your Silhouette?</option>
+              <option value="rectangle">Rectangle</option>
+              <option value="oval">Oval</option>
+              <option value="triangle">Triangle</option>
+              <option value="inverted-triangle">Inverted Triangle</option>
+              <option value="trapezoid">Trapezoid</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="colorPalette">Your Color Mood?</label>
+            <select id="colorPalette" required aria-required="true">
+              <option value="" disabled selected>Choose Your Palette</option>
+              <option value="warm">Warm (Reds, Oranges, Yellows)</option>
+              <option value="cool">Cool (Blues, Greens, Purples)</option>
+              <option value="neutral">Neutral (Grays, Whites, Blacks)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="primaryColor">Pick a Star Color</label>
+            <input type="color" id="primaryColor" value="#FF6347" required aria-required="true" />
+          </div>
+          <button type="submit" class="btn-primary" aria-label="Spin the color wheel">Spin the Color Wheel!</button>
+        </form>
+        <div class="wheel-container" id="wheelContainer">
+          <canvas id="spinWheel" width="300" height="300"></canvas>
+        </div>
+        <div id="gameResult" class="result-panel" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>© 2025 FashionGen AI. Designed with ❤️ by Reshmitha Reddy.</p>
+  </footer>
+
+  <script>
+    // Game-like color therapy and fashion advisor logic with spin wheel
+    const funnyQuotes = [
+      "Wear colors so bright, you need sunglasses to match!",
+      "Your style is so bold, it could walk the runway solo!",
+      "Dress like you’re the main character in a fashion rom-com!",
+      "Colors this good deserve their own fan club!",
+      "Your outfit is serving *looks* and stealing hearts!"
+    ];
+
+    const colorMap = {
+      '#FF6347': 'Red',
+      '#47A1FF': 'Blue',
+      '#FF8C69': 'Coral',
+      '#FF4040': 'Crimson',
+      '#47FF63': 'Lime',
+      '#6347FF': 'Purple',
+      '#6666FF': 'Light Blue',
+      '#0000CC': 'Navy',
+      '#FF0000': 'Scarlet',
+      '#00FF00': 'Green',
+      '#666666': 'Gray',
+      '#999999': 'Light Gray',
+      '#CCCCCC': 'Silver',
+      '#555555': 'Dark Gray',
+      '#777777': 'Slate'
+    };
+
+    function getColorName(hex) {
+      return colorMap[hex.toUpperCase()] || 'Custom Color';
+    }
+
+    function getRandomQuote() {
+      return funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)];
+    }
+
+    function getColorSchemes(primaryColor, palette) {
+      const isWarm = palette === 'warm';
+      const isCool = palette === 'cool';
+      const isNeutral = palette === 'neutral';
+
+      // Define color schemes based on palette
+      const colorData = {
+        warm: {
+          primary: primaryColor,
+          complementary: isWarm ? '#47A1FF' : '#666666', // Blue or Gray
+          analogous: isWarm ? ['#FF8C69', '#FF4040'] : ['#999999', '#CCCCCC'], // Coral, Crimson or Light Gray, Silver
+          triadic: isWarm ? ['#47FF63', '#6347FF'] : ['#555555', '#777777'] // Lime, Purple or Dark Gray, Slate
+        },
+        cool: {
+          primary: primaryColor,
+          complementary: isCool ? '#FF6347' : '#666666', // Red or Gray
+          analogous: isCool ? ['#6666FF', '#0000CC'] : ['#999999', '#CCCCCC'], // Light Blue, Navy or Light Gray, Silver
+          triadic: isCool ? ['#FF0000', '#00FF00'] : ['#555555', '#777777'] // Scarlet, Green or Dark Gray, Slate
+        },
+        neutral: {
+          primary: primaryColor,
+          complementary: '#666666', // Gray
+          analogous: ['#999999', '#CCCCCC'], // Light Gray, Silver
+          triadic: ['#555555', '#777777'] // Dark Gray, Slate
+        }
+      };
+
+      const colors = colorData[palette] || colorData.warm;
+      colors.therapy = getColorTherapy(primaryColor, palette);
+      colors.quote = getRandomQuote();
+      return colors;
+    }
+
+    function getColorTherapy(color, palette) {
+      const therapyMap = {
+        warm: {
+          '#FF6347': 'Red, a warm hue, ignites energy and confidence, making you the life of any party!',
+          default: `This warm ${palette} color radiates enthusiasm, perfect for bold, vibrant looks.`
+        },
+        cool: {
+          '#47A1FF': 'Blue, a cool tone, brings calm and trust, ideal for a serene, polished vibe.',
+          default: `This cool ${palette} color promotes peace and focus, great for chic, relaxed styles.`
+        },
+        neutral: {
+          '#666666': 'Gray exudes balance and sophistication, versatile for any mood.',
+          default: `This neutral ${palette} color offers elegance and flexibility for timeless looks.`
+        }
+      };
+      return therapyMap[palette][color] || therapyMap[palette].default;
+    }
+
+    function getFashionSuggestion(primary, complementary, analogous, palette, gender, bodyType) {
+      const primaryName = getColorName(primary);
+      const compName = getColorName(complementary);
+      const analog1Name = getColorName(analogous[0]);
+      const analog2Name = getColorName(analogous[1]);
+      const baseSuggestion = `With ${primaryName} as your star color in a ${palette} palette, pair with ${compName} for a bold pop or ${analog1Name} and ${analog2Name} for a harmonious vibe. Add neutral accessories (white, black, beige) for balance.`;
+
+      const genderStyles = {
+        male: {
+          rectangle: `Your shoulders and hips are aligned with a straight torso. Wear a ${primaryName} fitted blazer with ${compName} slim-fit jeans to define your waist and add structure.`,
+          oval: `Your torso is rounded with a wider midsection. Opt for ${primaryName} structured jackets and ${analog1Name} loose-fit shirts to smooth out curves.`,
+          triangle: `Your hips are wider than your shoulders. Choose ${primaryName} bold shirts to broaden shoulders, paired with ${compName} dark trousers to slim hips.`,
+          'inverted-triangle': `Your shoulders are wider than your hips. Try ${primaryName} slim-fit tees and ${analog2Name} straight-leg pants to balance proportions.`,
+          trapezoid: `Your shoulders are slightly wider than your hips with a tapered waist. Rock a ${primaryName} tailored suit with ${compName} chinos for a sharp, balanced look.`
+        },
+        female: {
+          rectangle: `Your shoulders, waist, and hips are aligned. Wear a ${primaryName} belted dress or ${compName} fitted top to create curves.`,
+          oval: `Your midsection is wider than your shoulders and hips. Opt for ${primaryName} empire-waist dresses or ${analog1Name} flowy tops to flatter your shape.`,
+          triangle: `Your hips are wider than your shoulders. Choose a ${primaryName} A-line skirt or ${compName} bold tops to balance your proportions.`,
+          'inverted-triangle': `Your shoulders are wider than your hips. Try a ${primaryName} flared dress or ${analog2Name} soft tops to soften your frame.`,
+          trapezoid: `Your shoulders are slightly wider than your hips with a defined waist. Rock a ${primaryName} wrap dress or ${compName} fitted skirt to highlight your curves.`
+        },
+        transgender: {
+          rectangle: `Your torso is straight. Experiment with a ${primaryName} tailored outfit or ${compName} belted top to shape your silhouette, aligning with your style.`,
+          oval: `Your midsection is fuller. Select ${primaryName} flowy tops or ${analog1Name} structured jackets for a balanced, personalized look.`,
+          triangle: `Your hips are wider. Use ${primaryName} bold tops or ${compName} structured pieces to broaden shoulders and balance hips.`,
+          'inverted-triangle': `Your shoulders are broad. Wear ${primaryName} soft tops or ${analog2Name} flared bottoms to create harmony in your proportions.`,
+          trapezoid: `Your shoulders taper to a defined waist. Highlight your shape with ${primaryName} fitted dresses or ${compName} tailored pants for a versatile vibe.`
+        },
+        nonbinary: {
+          rectangle: `Your proportions are even. Try a ${primaryName} oversized blazer with ${compName} slim pants for a neutral, defined look.`,
+          oval: `Your torso is rounded. Go for ${primaryName} loose tunics or ${analog1Name} long cardigans for a relaxed, inclusive style.`,
+          triangle: `Your hips are prominent. Wear a ${primaryName} bold jacket or ${compName} structured top to balance your frame.`,
+          'inverted-triangle': `Your shoulders dominate. Opt for ${primaryName} minimalist tops or ${analog2Name} flowy pants for a clean, neutral aesthetic.`,
+          trapezoid: `Your waist is defined. Choose ${primaryName} unisex shirts or ${compName} relaxed trousers for a versatile, comfortable look.`
+        }
+      };
+
+      const style = genderStyles[gender]?.[bodyType] || `Rock ${primaryName} versatile pieces with ${compName} or ${analog1Name} accents to shine in your unique style.`;
+      return `${baseSuggestion} ${style}`;
+    }
+
+    // Spin Wheel Logic
+    function drawWheel(canvas, colors, selectedColor) {
+      const ctx = canvas.getContext('2d');
+      const segments = [
+        { color: colors.primary, name: getColorName(colors.primary) },
+        { color: colors.complementary, name: getColorName(colors.complementary) },
+        { color: colors.analogous[0], name: getColorName(colors.analogous[0]) },
+        { color: colors.analogous[1], name: getColorName(colors.analogous[1]) },
+        { color: colors.triadic[0], name: getColorName(colors.triadic[0]) },
+        { color: colors.triadic[1], name: getColorName(colors.triadic[1]) }
+      ];
+      const arc = Math.PI / 3; // 60 degrees per segment
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      segments.forEach((seg, i) => {
+        ctx.beginPath();
+        ctx.fillStyle = seg.color;
+        ctx.arc(150, 150, 140, i * arc, (i + 1) * arc);
+        ctx.lineTo(150, 150);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(i * arc + arc / 2);
+        ctx.fillStyle = '#fff';
+        ctx.font = '16px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(seg.name, 100, 0);
+        ctx.restore();
+      });
+      // Draw arrow
+      ctx.beginPath();
+      ctx.fillStyle = '#f0c05a';
+      ctx.moveTo(150, 10);
+      ctx.lineTo(140, 30);
+      ctx.lineTo(160, 30);
+      ctx.fill();
+    }
+
+    function spinWheel(canvas, colors, selectedColor, callback) {
+      let angle = 0;
+      const spinTime = 3000; // 3 seconds
+      const start = Date.now();
+      const targetSegment = 0; // Always land on primary color (first segment)
+      const targetAngle = targetSegment * (Math.PI / 3) + Math.PI / 6; // Center of primary segment
+
+      function animate() {
+        const elapsed = Date.now() - start;
+        const progress = Math.min(elapsed / spinTime, 1);
+        angle = (progress * 4 * Math.PI + targetAngle) % (2 * Math.PI); // Spin 2 full rotations + target
+        drawWheel(canvas, colors, selectedColor);
+        canvas.style.transform = `rotate(${angle}rad)`;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.style.transform = `rotate(${targetAngle}rad)`;
+          callback();
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const gameForm = document.getElementById('gameForm');
+      const gameResult = document.getElementById('gameResult');
+      const wheelContainer = document.getElementById('wheelContainer');
+      const canvas = document.getElementById('spinWheel');
+
+      gameForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const gender = document.getElementById('gender').value;
+        const bodyType = document.getElementById('bodyType').value;
+        const colorPalette = document.getElementById('colorPalette').value;
+        const primaryColor = document.getElementById('primaryColor').value;
+
+        if (!gender || !bodyType || !colorPalette || !primaryColor) {
+          alert('Please fill out all fields to spin the wheel!');
+          return;
+        }
+
+        try {
+          const colors = getColorSchemes(primaryColor, colorPalette);
+          colors.fashionSuggestion = getFashionSuggestion(primaryColor, colors.complementary, colors.analogous, colorPalette, gender, bodyType);
+
+          // Show wheel and animate
+          wheelContainer.style.display = 'block';
+          gameResult.innerHTML = '';
+          gsap.to(wheelContainer, { opacity: 1, y: 0, duration: 0.5 });
+          spinWheel(canvas, colors, primaryColor, () => {
+            // Display results after spin
+            gsap.to(wheelContainer, { opacity: 0, y: 20, duration: 0.5, onComplete: () => {
+              wheelContainer.style.display = 'none';
+            }});
+            gsap.to(gameResult, { opacity: 0, y: 20, duration: 0 });
+            gameResult.innerHTML = `
+              <h3>Your Style Destiny Awaits!</h3>
+              <p class="quote">${colors.quote}</p>
+              <div class="color-scheme">
+                <p><strong>Your Star Color:</strong> <span class="color-swatch" style="background: ${colors.primary}"></span> ${getColorName(colors.primary)}</p>
+                <p><strong>Complementary Color:</strong> <span class="color-swatch" style="background: ${colors.complementary}"></span> ${getColorName(colors.complementary)}</p>
+                <p><strong>Analogous Colors:</strong>
+                  <span class="color-swatch" style="background: ${colors.analogous[0]}"></span> ${getColorName(colors.analogous[0])}
+                  <span class="color-swatch" style="background: ${colors.analogous[1]}"></span> ${getColorName(colors.analogous[1])}
+                </p>
+                <p><strong>Triadic Colors:</strong>
+                  <span class="color-swatch" style="background: ${colors.triadic[0]}"></span> ${getColorName(colors.triadic[0])}
+                  <span class="color-swatch" style="background: ${colors.triadic[1]}"></span> ${getColorName(colors.triadic[1])}
+                </p>
+              </div>
+              <p class="suggestion"><strong>Color Therapy Vibes:</strong> ${colors.therapy}</p>
+              <p class="suggestion"><strong>Fashion Quest:</strong> ${colors.fashionSuggestion}</p>
+            `;
+            gsap.to(gameResult, { opacity: 1, y: 0, duration: 1, ease: "bounce.out" });
+          });
+        } catch (error) {
+          gameResult.innerHTML = '<p>Oops! The color wheel got dizzy. Try again!</p>';
+          console.error(error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

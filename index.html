@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FashionGen AI - Smart Outfit Classifier</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
+  <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="container">
+      <div class="fashion-icons left">
+        <i class="fas fa-hat-cowboy"></i>
+        <i class="fas fa-tshirt"></i>
+        <i class="fas fa-shoe-prints"></i>
+        <i class="fas fa-glasses"></i>
+      </div>
+      <div class="fashion-icons right">
+        <i class="fas fa-hat-wizard"></i>
+        <i class="fas fa-socks"></i>
+        <i class="fas fa-boot"></i>
+        <i class="fas fa-watch"></i>
+      </div>
+      <h1 class="logo">FashionGen <span class="ai-label">AI</span></h1>
+      <nav class="nav">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="hero-content">
+      <h1>Style Meets Intelligence</h1>
+      <p>AI-powered fashion suggestions based on your outfit, color theory, and occasion.</p>
+      <button id="exploreButton" class="btn-primary">Start Styling</button>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <h2>What We Offer</h2>
+    <div class="feature-cards">
+      <div class="card">
+        <i class="fas fa-cloud-sun"></i>
+        <h3>Weather-Aware Suggestions</h3>
+        <a href="weather-styling.html" class="feature-btn">Explore Weather Styling</a>
+      </div>
+      <div class="card">
+        <i class="fas fa-shirt"></i>
+        <h3>Smart Outfit Classifier</h3>
+        <a href="outfit-classifier.html" class="feature-btn">Try Outfit Detection</a>
+      </div>
+      <div class="card">
+        <i class="fas fa-swatchbook"></i>
+        <h3>Color Theory Matching</h3>
+        <a href="color-theory.html" class="feature-btn">Color Match Now</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="chatbot-section">
+    <div id="chatbot" class="chatbot" onclick="toggleChatbot()">
+      <div class="chatbot-icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="chatbot-content">
+        <div class="chat-header">
+          <i class="fas fa-robot"></i> Ask StyloBot (AI Stylist)
+        </div>
+        <div id="chatBody" class="chat-body"></div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Ask me anything about fashion..." />
+          <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h2>About FashionGen AI</h2>
+    <p>FashionGen AI brings cutting-edge fashion insights by analyzing your outfit image, applying color theory, and matching your event. With AI-powered suggestions and chatbot support, styling is now effortless and smart.</p>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 FashionGen AI. Designed with ❤️ by Reshmitha Reddy.</p>
+  </footer>
+
+  <script src="main.js"></script>
+  <script src="chatbot.js"></script>
+</body>
+</html>

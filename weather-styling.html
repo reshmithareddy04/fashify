@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Get AI-powered outfit suggestions tailored to the weather in your location with FashionGen AI." />
+  <meta name="keywords" content="weather-based styling, fashion AI, outfit recommendations" />
+  <meta property="og:title" content="Weather-Aware Styling - FashionGen AI" />
+  <meta property="og:description" content="Discover outfits that match the weather in your location with FashionGen AI." />
+  <meta property="og:image" content="/assets/og-weather.jpg" />
+  <title>Weather-Aware Styling - FashionGen AI</title>
+  <link rel="stylesheet" href="styled.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
+  <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="container">
+      <a href="/" class="logo" aria-label="FashionGen AI Home">
+        <h1>FashionGen <span class="ai-label">AI</span></h1>
+      </a>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="index.html">Features</a>
+        <a href="index.html">Try Now</a>
+        <a href="index.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="weather-styling" role="region" aria-labelledby="weather-title">
+      <div class="container">
+        <h1 id="weather-title">Weather-Aware Styling</h1>
+        <p>Get outfit recommendations tailored to the current weather in your location.</p>
+        <div id="weatherInfo" aria-live="polite">Enter a city to get started...</div>
+        <div class="outfit-grid" id="outfitRecommendations">
+          <!-- Dynamically populated outfits -->
+        </div>
+        <form id="weatherForm" aria-describedby="weather-instructions">
+          <p id="weather-instructions" class="sr-only">Enter a city to get weather-based outfit suggestions.</p>
+          <div class="form-group">
+            <label for="cityInput">Enter City</label>
+            <input type="text" id="cityInput" placeholder="e.g., New Delhi, Mumbai, Paris" required />
+          </div>
+          <button type="submit" class="btn-primary" aria-label="Get weather-based outfit suggestions">Get Suggestions</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>© 2025 FashionGen AI. Designed with ❤️ by Reshmitha Reddy.</p>
+  </footer>
+
+  <script src="shared.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const weatherForm = document.getElementById('weatherForm');
+      const weatherInfo = document.getElementById('weatherInfo');
+      const outfitGrid = document.getElementById('outfitRecommendations');
+
+      // Handle city input
+      weatherForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const city = document.getElementById('cityInput').value.trim();
+        if (city) {
+          await fetchWeatherSuggestions(city);
+        } else {
+          weatherInfo.textContent = 'Please enter a city.';
+        }
+      });
+
+      async function fetchWeatherSuggestions(city) {
+        try {
+          const weather = await getWeatherData(city);
+          if (!weather.temperature) {
+            throw new Error('City not found');
+          }
+          weatherInfo.textContent = `Current Weather in ${city}: ${weather.temperature}°C, ${weather.condition}, Climate: ${weather.climate}`;
+          
+          const outfits = await getWeatherOutfits(weather.condition, weather.temperature, city);
+          const style = await getLocationStyles(city);
+
+          outfitGrid.innerHTML = `
+            <div class="style-card">
+              <h3>Local Style: ${style.style}</h3>
+              <img src="${style.imageUrl}" alt="${style.description}" loading="lazy" />
+              <p>${style.description}</p>
+            </div>
+            ${outfits
+              .map(
+                outfit => `
+                  <div class="outfit-card">
+                    <img src="${outfit.imageUrl}" alt="${outfit.description}" loading="lazy" />
+                    <p>${outfit.description}</p>
+                  </div>
+                `
+              )
+              .join('')}
+          `;
+        } catch (error) {
+          weatherInfo.textContent = `Error: City "${city}" not found. Try cities like New Delhi, Mumbai, or Paris.`;
+          outfitGrid.innerHTML = '';
+          console.error(error);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
