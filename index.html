@@ -70,21 +70,20 @@
   </section>
 
   <section class="chatbot-section">
-    <div id="chatbot" class="chatbot">
-      <div class="chatbot-icon" onclick="toggleChatbot()">
-        <i class="fas fa-robot"></i>
+  <div id="chatbot" class="chatbot open"> <!-- Ensure 'open' class is added -->
+    <!-- Removed chatbot-icon -->
+    <div class="chatbot-content">
+      <div class="chat-header">
+        <i class="fas fa-robot"></i> Ask StyloBot (AI Stylist)
       </div>
-      <div class="chatbot-content">
-        <div class="chat-header">
-          <i class="fas fa-robot"></i> Ask StyloBot (AI Stylist)
-        </div>
-        <div id="chatBody" class="chat-body"></div>
-        <div class="chat-input">
-          <input type="text" id="chatInput" placeholder="Ask me anything about fashion..." aria-label="Chat input for fashion queries" />
-          <button id="chatSend" aria-label="Send chat message"><i class="fas fa-paper-plane"></i></button>
-        </div>
+      <div id="chatBody" class="chat-body"></div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Ask me anything about fashion..." aria-label="Chat input for fashion queries" />
+        <button id="chatSend" aria-label="Send chat message"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
+  </div>
+
   </section>
 
   <section id="about" class="about">
