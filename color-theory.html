@@ -14,8 +14,369 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
   <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
   <style>
-    .wheel-container { text-align: center; margin: 20px 0; display: none; }
-    #spinWheel { border-radius: 50%; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
+      background: linear-gradient(135deg, #0d1b2a, #1b263b);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(90deg, #3c096c, #14213d);
+      color: #fff;
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      width: 100%;
+    }
+
+    .header .container {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #f4a261;
+      text-shadow: 0 0 20px rgba(244, 162, 97, 0.7);
+      display: flex;
+      align-items: center;
+    }
+
+    .ai-label {
+      background: linear-gradient(45deg, #5a189a, #7b2cbf);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-left: 10px;
+      box-shadow: 0 4px 15px rgba(91, 24, 154, 0.6);
+    }
+
+    .nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #d4d4d4;
+      position: relative;
+    }
+
+    .nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #f4a261;
+      transition: width 0.3s ease;
+    }
+
+    .nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Main Section */
+    .color-theory {
+      padding: 4rem 1rem;
+      background: #1b263b;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .color-theory h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(244, 162, 97, 0.5);
+    }
+
+    .color-theory p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: #d4d4d4;
+    }
+
+    /* Form Styling */
+    #gameForm {
+      max-width: 600px;
+      width: 100%;
+      display: grid;
+      gap: 1.5rem;
+      justify-items: center;
+    }
+
+    .form-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-group label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #f4a261;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group select,
+    .form-group input[type="color"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    .form-group input[type="color"] {
+      height: 40px;
+      padding: 0.2rem;
+    }
+
+    .form-group select:focus,
+    .form-group input[type="color"]:focus {
+      outline: none;
+      border-color: #7b2cbf;
+      box-shadow: 0 0 8px rgba(91, 24, 154, 0.4);
+    }
+
+    .btn-primary {
+      padding: 0.8rem 2rem;
+      border: none;
+      background: linear-gradient(45deg, #7b2cbf, #f4a261);
+      color: #fff;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(91, 24, 154, 0.4);
+      margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, #5a189a, #e76f51);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(91, 24, 154, 0.6);
+    }
+
+    /* Wheel Container */
+    .wheel-container {
+      text-align: center;
+      margin: 20px 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    #spinWheel {
+      border-radius: 50%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      max-width: 100%;
+    }
+
+    /* Result Panel */
+    .result-panel {
+      max-width: 600px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      margin: 2rem auto;
+      text-align: left;
+    }
+
+    .result-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .result-panel p {
+      font-size: 1.1rem;
+      color: #d4d4d4;
+      margin-bottom: 0.8rem;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #7b2cbf;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .color-swatch {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .color-scheme {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .suggestion {
+      margin-top: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0d1b2a;
+      color: #d4d4d4;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-top: 2px solid #f4a261;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .footer p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .color-theory h1 {
+        font-size: 2.2rem;
+      }
+
+      .color-theory p {
+        font-size: 1rem;
+      }
+
+      .form-group label {
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+      }
+
+      #spinWheel {
+        width: 200px;
+        height: 200px;
+      }
+
+      .result-panel h3 {
+        font-size: 1.5rem;
+      }
+
+      .result-panel p {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 2rem;
+      }
+
+      .color-theory h1 {
+        font-size: 1.8rem;
+      }
+
+      .color-theory p {
+        font-size: 0.9rem;
+      }
+
+      .form-group select,
+      .form-group input[type="color"] {
+        font-size: 0.9rem;
+      }
+
+      #spinWheel {
+        width: 150px;
+        height: 150px;
+      }
+
+      .result-panel {
+        padding: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -193,7 +554,7 @@
         female: {
           rectangle: `Your shoulders, waist, and hips are aligned. Wear a ${primaryName} belted dress or ${compName} fitted top to create curves.`,
           oval: `Your midsection is wider than your shoulders and hips. Opt for ${primaryName} empire-waist dresses or ${analog1Name} flowy tops to flatter your shape.`,
-          triangle: `Your hips are wider than your shoulders. Choose a ${primaryName} A-line skirt or ${compName} bold tops to balance your proportions.`,
+          triangle: ` jlYour hips are wider than your shoulders. Choose a ${primaryName} A-line skirt or ${compName} bold tops to balance your proportions.`,
           'inverted-triangle': `Your shoulders are wider than your hips. Try a ${primaryName} flared dress or ${analog2Name} soft tops to soften your frame.`,
           trapezoid: `Your shoulders are slightly wider than your hips with a defined waist. Rock a ${primaryName} wrap dress or ${compName} fitted skirt to highlight your curves.`
         },
