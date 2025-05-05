@@ -9,9 +9,390 @@
   <meta property="og:description" content="Discover outfits that match the weather in your location with FashionGen AI." />
   <meta property="og:image" content="/assets/og-weather.jpg" />
   <title>Weather-Aware Styling - FashionGen AI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" />
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js" defer></script>
   <script src="https://kit.fontawesome.com/830b76325f.js" crossorigin="anonymous" defer></script>
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
+      background: linear-gradient(135deg, #0d1b2a, #1b263b);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(90deg, #3c096c, #14213d);
+      color: #fff;
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      width: 100%;
+    }
+
+    .header .container {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #f4a261;
+      text-shadow: 0 0 20px rgba(244, 162, 97, 0.7);
+      display: flex;
+      align-items: center;
+    }
+
+    .ai-label {
+      background: linear-gradient(45deg, #5a189a, #7b2cbf);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-left: 10px;
+      box-shadow: 0 4px 15px rgba(91, 24, 154, 0.6);
+    }
+
+    .nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #d4d4d4;
+      position: relative;
+    }
+
+    .nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #f4a261;
+      transition: width 0.3s ease;
+    }
+
+    .nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Main Section */
+    .weather-styling {
+      padding: 4rem 1rem;
+      background: #1b263b;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .weather-styling h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(244, 162, 97, 0.5);
+    }
+
+    .weather-styling p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: #d4d4d4;
+    }
+
+    #weatherInfo {
+      font-size: 1.1rem;
+      color: #d4d4d4;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+    }
+
+    /* Dressing Tips */
+    #dressingTips {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      margin: 2rem auto;
+      text-align: left;
+    }
+
+    #dressingTips h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    #dressingTips ul {
+      list-style: none;
+      padding: 0;
+      font-size: 1rem;
+      color: #d4d4d4;
+    }
+
+    #dressingTips li {
+      margin-bottom: 0.8rem;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    #dressingTips li::before {
+      content: '•';
+      color: #7b2cbf;
+      position: absolute;
+      left: 0;
+      font-size: 1.2rem;
+    }
+
+    /* Form Styling */
+    #weatherForm {
+      max-width: 600px;
+      width: 100%;
+      display: grid;
+      gap: 1.5rem;
+      justify-items: center;
+    }
+
+    .form-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .form-group label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #f4a261;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #7b2cbf;
+      box-shadow: 0 0 8px rgba(91, 24, 154, 0.4);
+    }
+
+    .btn-primary {
+      padding: 0.8rem 2rem;
+      border: none;
+      background: linear-gradient(45deg, #7b2cbf, #f4a261);
+      color: #fff;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(91, 24, 154, 0.4);
+      margin-top: 1rem;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, #5a189a, #e76f51);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(91, 24, 154, 0.6);
+    }
+
+    /* Outfit Grid */
+    .outfit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      margin: 2rem 0;
+    }
+
+    .style-card,
+    .outfit-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .style-card h3,
+    .outfit-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #f4a261;
+      margin-bottom: 1rem;
+    }
+
+    .style-card img,
+    .outfit-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .style-card p,
+    .outfit-card p {
+      font-size: 1rem;
+      color: #d4d4d4;
+    }
+
+    /* Footer */
+    .footer {
+      background: #0d1b2a;
+      color: #d4d4d4;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-top: 2px solid #f4a261;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .footer p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .weather-styling h1 {
+        font-size: 2.2rem;
+      }
+
+      .weather-styling p {
+        font-size: 1rem;
+      }
+
+      .form-group label {
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+      }
+
+      .style-card h3,
+      .outfit-card h3 {
+        font-size: 1.4rem;
+      }
+
+      .style-card p,
+      .outfit-card p {
+        font-size: 0.9rem;
+      }
+
+      #dressingTips h3 {
+        font-size: 1.5rem;
+      }
+
+      #dressingTips ul {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 2rem;
+      }
+
+      .weather-styling h1 {
+        font-size: 1.8rem;
+      }
+
+      .weather-styling p {
+        font-size: 0.9rem;
+      }
+
+      .form-group input {
+        font-size: 0.9rem;
+      }
+
+      .style-card img,
+      .outfit-card img {
+        height: 150px;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header" role="banner">
@@ -21,9 +402,9 @@
       </a>
       <nav class="nav" role="navigation" aria-label="Main navigation">
         <a href="index.html">Home</a>
-        <a href="index.html">Features</a>
-        <a href="index.html">Try Now</a>
-        <a href="index.html">About</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#try-now">Try Now</a>
+        <a href="index.html#about">About</a>
       </nav>
     </div>
   </header>
@@ -34,6 +415,7 @@
         <h1 id="weather-title">Weather-Aware Styling</h1>
         <p>Get outfit recommendations tailored to the current weather in your location.</p>
         <div id="weatherInfo" aria-live="polite">Enter a city to get started...</div>
+        <div id="dressingTips" aria-live="polite"></div>
         <div class="outfit-grid" id="outfitRecommendations">
           <!-- Dynamically populated outfits -->
         </div>
@@ -59,6 +441,7 @@
       const weatherForm = document.getElementById('weatherForm');
       const weatherInfo = document.getElementById('weatherInfo');
       const outfitGrid = document.getElementById('outfitRecommendations');
+      const dressingTips = document.getElementById('dressingTips');
 
       // Handle city input
       weatherForm.addEventListener('submit', async e => {
@@ -68,6 +451,8 @@
           await fetchWeatherSuggestions(city);
         } else {
           weatherInfo.textContent = 'Please enter a city.';
+          dressingTips.innerHTML = '';
+          outfitGrid.innerHTML = '';
         }
       });
 
@@ -81,7 +466,14 @@
           
           const outfits = await getWeatherOutfits(weather.condition, weather.temperature, city);
           const style = await getLocationStyles(city);
+          const tips = await getDressingTips(weather.condition, weather.temperature, weather.climate, city);
 
+          dressingTips.innerHTML = `
+            <h3>Dressing Tips for ${city}</h3>
+            <ul>
+              ${tips.map(tip => `<li>${tip}</li>`).join('')}
+            </ul>
+          `;
           outfitGrid.innerHTML = `
             <div class="style-card">
               <h3>Local Style: ${style.style}</h3>
@@ -99,8 +491,23 @@
               )
               .join('')}
           `;
+          // Animate tips and cards
+          gsap.from('#dressingTips', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: 'power3.out'
+          });
+          gsap.from('.style-card, .outfit-card', {
+            opacity: 0,
+            y: 50,
+            stagger: 0.2,
+            duration: 1,
+            ease: 'power3.out'
+          });
         } catch (error) {
           weatherInfo.textContent = `Error: City "${city}" not found. Try cities like New Delhi, Mumbai, or Paris.`;
+          dressingTips.innerHTML = '';
           outfitGrid.innerHTML = '';
           console.error(error);
         }
