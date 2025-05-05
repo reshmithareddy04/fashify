@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatBody = document.getElementById("chatBody");
   const chatInput = document.getElementById("chatInput");
   const chatSend = document.getElementById("chatSend");
+  const chatClose = document.getElementById("chatClose");
   const chatbot = document.getElementById("chatbot");
   const optionsContainer = document.createElement("div");
   optionsContainer.id = "optionsContainer";
@@ -9,8 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   chatBody.appendChild(optionsContainer);
 
   let isFirstOpen = true;
+  let inactivityTimer;
 
-  // Debounce utility to prevent rapid opening
+  // Debounce utility to prevent rapid toggling
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -23,17 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Open chatbot (no closing functionality)
+  // Reset inactivity timer (3 minutes = 180000ms)
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    if (chatbot.classList.contains("active")) {
+      inactivityTimer = setTimeout(() => {
+        toggleChatbot();
+      }, 180000);
+    }
+  }
+
+  // Toggle chatbot visibility
   window.toggleChatbot = debounce(function () {
-    if (!chatbot.classList.contains("active")) {
-      chatbot.classList.add("active");
+    chatbot.classList.toggle("active");
+    if (chatbot.classList.contains("active")) {
       gsap.to(".chatbot-content", { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" });
       if (isFirstOpen) {
         botGreet();
         isFirstOpen = false;
       }
+      resetInactivityTimer();
+    } else {
+      gsap.to(".chatbot-content", { scale: 0.8, opacity: 0, duration: 0.3, ease: "power2.in" });
+      clearTimeout(inactivityTimer);
     }
   }, 300);
+
+  // Close chatbot on close button click
+  chatClose.addEventListener("click", () => {
+    toggleChatbot();
+  });
 
   // Prevent clicks inside chatbot-content from bubbling up
   document.querySelector(".chatbot-content").addEventListener("click", (e) => {
@@ -73,7 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach((btn) => {
-      btn.addEventListener("click", () => handleOptionClick(btn.dataset.option));
+      btn.addEventListener("click", () => {
+        handleOptionClick(btn.dataset.option);
+        resetInactivityTimer();
+      });
     });
   };
 
@@ -195,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       addUserMessage(message);
       handleChat(message);
       chatInput.value = "";
+      resetInactivityTimer();
     }
   });
 
@@ -202,5 +227,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") {
       chatSend.click();
     }
+  });
+
+  chatInput.addEventListener("input", () => {
+    resetInactivityTimer();
   });
 });
