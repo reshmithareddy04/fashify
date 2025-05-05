@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Get AI-powered outfit suggestions tailored to the weather, occasion, or color theory with FashionGen AI." />
+  <meta name="keywords" content="weather-based styling, fashion AI, outfit classifier, color theory" />
+  <meta property="og:title" content="FashionGen AI - Smart Outfit Classifier" />
+  <meta property="og:description" content="Discover AI-powered fashion suggestions for any occasion, weather, or color palette." />
+  <meta property="og:image" content="/assets/og-fashion.jpg" />
   <title>FashionGen AI - Smart Outfit Classifier</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" />
   <link rel="stylesheet" href="style.css" />
@@ -24,8 +29,10 @@
         <i class="fas fa-boot"></i>
         <i class="fas fa-watch"></i>
       </div>
-      <h1 class="logo">FashionGen <span class="ai-label">AI</span></h1>
-      <nav class="nav">
+      <a href="/" class="logo" aria-label="FashionGen AI Home">
+        <h1>FashionGen <span class="ai-label">AI</span></h1>
+      </a>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#features">Features</a>
         <a href="#about">About</a>
@@ -63,10 +70,8 @@
   </section>
 
   <section class="chatbot-section">
-    <div id="chatbot" class="chatbot" onclick="toggleChatbot()">
-      <button id="chatClose" style="position: absolute; top: 10px; right: 10px;">×</button>
-
-      <div class="chatbot-icon">
+    <div id="chatbot" class="chatbot">
+      <div class="chatbot-icon" onclick="toggleChatbot()">
         <i class="fas fa-robot"></i>
       </div>
       <div class="chatbot-content">
@@ -75,8 +80,8 @@
         </div>
         <div id="chatBody" class="chat-body"></div>
         <div class="chat-input">
-          <input type="text" id="chatInput" placeholder="Ask me anything about fashion..." />
-          <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+          <input type="text" id="chatInput" placeholder="Ask me anything about fashion..." aria-label="Chat input for fashion queries" />
+          <button id="chatSend" aria-label="Send chat message"><i class="fas fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
@@ -91,7 +96,8 @@
     <p>© 2025 FashionGen AI. Designed with ❤️ by Reshmitha Reddy.</p>
   </footer>
 
-  <script src="main.js"></script>
-  <script src="chatbot.js"></script>
+  <script src="shared.js" defer></script>
+  <script src="main.js" defer></script>
+  <script src="chatbot.js" defer></script>
 </body>
 </html>
