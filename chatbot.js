@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isFirstOpen = true;
 
-  // Debounce utility to prevent rapid toggling
+  // Debounce utility to prevent rapid opening
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -23,28 +23,19 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Toggle chatbot visibility
+  // Open chatbot (no closing functionality)
   window.toggleChatbot = debounce(function () {
-    chatbot.classList.toggle("active");
-    if (chatbot.classList.contains("active")) {
+    if (!chatbot.classList.contains("active")) {
+      chatbot.classList.add("active");
       gsap.to(".chatbot-content", { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" });
       if (isFirstOpen) {
         botGreet();
         isFirstOpen = false;
       }
-    } else {
-      gsap.to(".chatbot-content", { scale: 0.8, opacity: 0, duration: 0.3, ease: "power2.in" });
     }
   }, 300);
 
-  // Close chatbot when clicking outside
-  document.addEventListener("click", (e) => {
-    if (!chatbot.contains(e.target) && chatbot.classList.contains("active")) {
-      toggleChatbot();
-    }
-  });
-
-  // Prevent clicks inside chatbot-content from closing the chatbox
+  // Prevent clicks inside chatbot-content from bubbling up
   document.querySelector(".chatbot-content").addEventListener("click", (e) => {
     e.stopPropagation();
   });
